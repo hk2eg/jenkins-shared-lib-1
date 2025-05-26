@@ -1,6 +1,8 @@
-def call(String skipTest) {
+def call(String skipTest = 'true') {
     def mvnHome = tool name: 'maven-3.8', type: 'hudson.tasks.Maven$MavenInstallation'
     withEnv(["PATH+MAVEN=${mvnHome}/bin"]) {
-        sh "mvn clean package install -Dmaven.test.skip=${skipTest}"
+        dir('java-jenkins-sample-project') {  // adjust to your actual folder name
+            sh "mvn clean package install -Dmaven.test.skip=${skipTest}"
+        }
     }
 }
