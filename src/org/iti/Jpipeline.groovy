@@ -1,6 +1,6 @@
 package org.iti
 
-def run(Map args = [:]) {
+def executePipeline(Map args = [:]) {
     def script = args.script
     def docker_user = args.docker_user
     def docker_pass = args.docker_pass
