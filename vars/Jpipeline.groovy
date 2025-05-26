@@ -17,6 +17,10 @@ def call(Map args) {
             )
         ]) {
             try {
+                script.stage('Checkout App Repo'){
+                    script.checkout scm
+                }
+
                 script.stage("VM info") {
                     script.echo "Agent IP: ${script.vmIp()}"
                 }
