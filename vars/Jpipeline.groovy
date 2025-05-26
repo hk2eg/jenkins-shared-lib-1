@@ -8,7 +8,6 @@ def call(Map args) {
 
     script.node('agent-1') {
         script.tool name: "java-8"
-        script.tool name: "maven-3.8"
 
         script.withCredentials([
             script.usernamePassword(
