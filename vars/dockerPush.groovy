@@ -1,4 +1,4 @@
-def call(Map m) {
+def call(Map m = [:]) {
     m.steps = this
     new org.iti.Docker(m).push()
 }
