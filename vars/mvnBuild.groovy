@@ -1,14 +1,14 @@
 def call(String skipTest = 'true') {
     def mvnHome = tool name: 'maven-3.8'
     withEnv(["PATH+MAVEN=${mvnHome}/bin"]) {
-        script {
-            def pomPath = sh(script: "find . -name pom.xml | head -n1", returnStdout: true).trim()
-            def pomDir = pomPath.replaceAll('/pom.xml$', '')
-            echo "Using pom at: ${pomPath}"
+        // Show workspace contents
+        sh 'echo "Workspace contents:" && ls -la && find . -name pom.xml'
 
-            dir(pomDir) {
-                sh "mvn clean package install -Dmaven.test.skip=${skipTest}"
-            }
+        // You must manually dir() into the actual folder containing pom.xml
+        // Example: if the pom.xml is at ./src/myapp/pom.xml
+        // Replace 'src/myapp' with the correct path
+        dir('.') {
+            sh "mvn clean package install -Dmaven.test.skip=${skipTest}"
         }
     }
 }
