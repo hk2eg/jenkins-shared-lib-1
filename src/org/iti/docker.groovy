@@ -1,5 +1,5 @@
 package org.iti
-class Docker implements Serializable{
+class Docker implements Serializable {
     String docker_user
     String docker_pass
     String image
