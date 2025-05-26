@@ -1,24 +1,20 @@
-def call(Map args) {
-    def script       = args.script
-    def docker_user  = args.docker_user
-    def docker_pass  = args.docker_pass
-    def image        = args.default_image
-    def version      = args.version
-    def skipTest     = args.skipTest
+def call(script) {
+    def image    = "hk2802/java-mvn-sample"
+    def version  = script.params.VERSION ?: script.env.BUILD_NUMBER
+    def skipTest = script.params.TEST ?: 'true'
 
     script.node('agent-1') {
         script.tool name: "java-8"
+        script.tool name: "maven-3.8"
 
-        script.withCredentials([
-            script.usernamePassword(
-                credentialsId: 'docker-hub-login',
-                usernameVariable: 'DOCKER_USR',
-                passwordVariable: 'DOCKER_PSW'
-            )
-        ]) {
+        script.withCredentials([script.usernamePassword(
+            credentialsId: 'docker-hub-login',
+            usernameVariable: 'DOCKER_USR',
+            passwordVariable: 'DOCKER_PSW'
+        )]) {
             try {
-                script.stage('Checkout App Repo'){
-                    script.checkout scm
+                script.stage('Checkout App Repo') {
+                    script.checkout script.scm
                 }
 
                 script.stage("VM info") {
@@ -30,15 +26,16 @@ def call(Map args) {
                     script.mvnBuild(skipTest)
                 }
 
-                script.stage("build docker image") {
-                    script.dockerLogin(docker_user, docker_pass)
+                script.stage("Build Docker Image") {
+                    script.dockerLogin(script.env.DOCKER_USR, script.env.DOCKER_PSW)
                     script.dockerBuild(image, version)
                 }
 
-                script.stage("push docker image") {
-                    script.dockerLogin(docker_user, docker_pass)
+                script.stage("Push Docker Image") {
+                    script.dockerLogin(script.env.DOCKER_USR, script.env.DOCKER_PSW)
                     script.dockerPush(image, version)
                 }
+
             } catch (err) {
                 script.echo "Error: ${err.getMessage()}"
                 script.currentBuild.result = 'FAILURE'
