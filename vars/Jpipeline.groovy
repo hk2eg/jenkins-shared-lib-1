@@ -1,12 +1,10 @@
-package org.iti
-
-def executePipeline(Map args = [:]) {
-    def script = args.script
-    def docker_user = args.docker_user
-    def docker_pass = args.docker_pass
-    def image = args.default_image
-    def version = args.version
-    def skipTest = args.skipTest
+def call(Map args) {
+    def script       = args.script
+    def docker_user  = args.docker_user
+    def docker_pass  = args.docker_pass
+    def image        = args.default_image
+    def version      = args.version
+    def skipTest     = args.skipTest
 
     script.node('agent-1') {
         script.tool name: "java-8", type: 'hudson.model.JDK'
@@ -38,7 +36,6 @@ def executePipeline(Map args = [:]) {
                     script.dockerLogin(docker_user, docker_pass)
                     script.dockerPush(image, version)
                 }
-
             } catch (err) {
                 script.echo "Error: ${err.getMessage()}"
                 script.currentBuild.result = 'FAILURE'
